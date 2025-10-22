@@ -2,7 +2,7 @@ namespace LibraryApp.Models;
 
 public class Book : LibraryItem
 {
-    public string Author { get; set; }
+    public string Author { get; private set; }
 
     public Book()
     {
