@@ -4,5 +4,5 @@ namespace LibraryApp.Services;
 
 public class LibraryState
 {
-    public List<Book> Books { get; set; } = new();
+    public HashSet<Book> Books { get; set; } = new();
 }
