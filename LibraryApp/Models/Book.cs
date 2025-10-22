@@ -1,15 +1,20 @@
+using System.Text.Json.Serialization;
+
 namespace LibraryApp.Models;
 
 public class Book : LibraryItem
 {
     public string Author { get; private set; }
-
-    public Book()
+    
+    [JsonConstructor]
+    public Book(string id, string title, string author, int year, ItemStatus status)
+        : base(id, title, year, status)
     {
-        
+        Author = author;
     }
 
-    public Book(string id, string title, int year, string author) : base(id, title, year)
+    public Book(string id,string title, string author, int year)
+        : base(id, title, year, ItemStatus.Available)
     {
         Author = author;
     }

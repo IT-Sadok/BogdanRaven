@@ -105,7 +105,7 @@ public class ConsoleMenu
             Console.Write("Enter Year: ");
             var year = int.TryParse(Console.ReadLine(), out var y) ? y : 0;
 
-            var book = new Book(id, title, year, author);
+            var book = new Book(id, title, author, year);
             await _libraryService.AddBookAsync(book);
             Console.WriteLine("✅ Book added successfully!");
         });
