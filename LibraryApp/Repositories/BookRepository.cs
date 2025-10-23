@@ -1,4 +1,4 @@
-using LibraryApp.Models;
+using LibraryApp.Entities;
 using LibraryApp.Repositories.Interfaces;
 using LibraryApp.Services;
 using LibraryApp.Services.Interfaces;

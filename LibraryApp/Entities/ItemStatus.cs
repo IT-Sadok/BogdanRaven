@@ -1,4 +1,4 @@
-namespace LibraryApp.Models;
+namespace LibraryApp.Entities;
 
 public enum ItemStatus
 {

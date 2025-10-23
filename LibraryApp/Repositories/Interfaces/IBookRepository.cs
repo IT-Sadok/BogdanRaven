@@ -1,4 +1,4 @@
-using LibraryApp.Models;
+using LibraryApp.Entities;
 
 namespace LibraryApp.Repositories.Interfaces;
 

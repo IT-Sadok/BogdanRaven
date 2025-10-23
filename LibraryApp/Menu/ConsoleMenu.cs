@@ -1,3 +1,4 @@
+using LibraryApp.Entities;
 using LibraryApp.Models;
 using LibraryApp.Services.Interfaces;
 
@@ -105,7 +106,7 @@ public class ConsoleMenu
             Console.Write("Enter Year: ");
             var year = int.TryParse(Console.ReadLine(), out var y) ? y : 0;
 
-            var book = new Book
+            var book = new BookModel()
             {
                 Id = id,
                 Title = title,
