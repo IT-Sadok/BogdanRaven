@@ -7,10 +7,10 @@ namespace LibraryApp.Repositories;
 
 public class BookRepository : IBookRepository
 {
-    private readonly ILibraryStateProvider _stateProvider;
+    private readonly IStateProvider<LibraryState> _stateProvider;
     private readonly ISaveLoadService<LibraryState> _saveLoadService;
 
-    public BookRepository(ILibraryStateProvider stateProvider, ISaveLoadService<LibraryState> saveLoadService)
+    public BookRepository(IStateProvider<LibraryState> stateProvider, ISaveLoadService<LibraryState> saveLoadService)
     {
         _stateProvider = stateProvider;
         _saveLoadService = saveLoadService;

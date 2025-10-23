@@ -13,7 +13,7 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<ISaveLoadService<LibraryState>>(sp =>
             new JsonSaveLoadService<LibraryState>(filePath));
 
-        services.AddSingleton<ILibraryStateProvider, LibraryStateProvider>();
+        services.AddSingleton<IStateProvider<LibraryState>, StateProvider<LibraryState>>();
 
         services.AddScoped<IBookRepository, BookRepository>();
 
