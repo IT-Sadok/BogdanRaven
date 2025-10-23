@@ -77,8 +77,8 @@ public class LibraryService : ILibraryService
         if (book.Status == ItemStatus.Borrowed)
             throw new InvalidOperationException($"Book '{book.Title}' is already borrowed.");
 
-        book.Borrow();
-        await _bookRepository.UpdateAsync(book);
+        var updatedBook = book with { Status = ItemStatus.Borrowed };
+        await _bookRepository.UpdateAsync(updatedBook);
     }
 
     public async Task ReturnBookAsync(string id)
@@ -89,7 +89,7 @@ public class LibraryService : ILibraryService
         if (book.Status == ItemStatus.Available)
             throw new InvalidOperationException($"Book '{book.Title}' is not borrowed.");
 
-        book.Return();
-        await _bookRepository.UpdateAsync(book);
+        var updatedBook = book with { Status = ItemStatus.Available };
+        await _bookRepository.UpdateAsync(updatedBook);
     }
 }
