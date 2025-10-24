@@ -22,4 +22,6 @@ var host = Host.CreateDefaultBuilder(args)
     .Build();
 
 var menu = host.Services.GetRequiredService<ConsoleMenu>();
+var bookRepository = host.Services.GetRequiredService<IBookRepository>();
+await bookRepository.LoadState();
 await menu.StartAsync();

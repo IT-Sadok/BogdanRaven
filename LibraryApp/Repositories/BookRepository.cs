@@ -13,9 +13,13 @@ public class BookRepository : IBookRepository
     public BookRepository(ISaveLoadService<LibraryState> saveLoadService)
     {
         _saveLoadService = saveLoadService;
+    }
 
-        if (saveLoadService.IsSaveExistsAsync().Result)
-            _libraryState = saveLoadService.LoadAsync().Result!;
+    public async Task LoadState()
+    {
+        bool hasSave = await _saveLoadService.IsSaveExistsAsync();
+        if (hasSave)
+            _libraryState = await _saveLoadService.LoadAsync();
         else
             _libraryState = new LibraryState();
     }
@@ -29,7 +33,14 @@ public class BookRepository : IBookRepository
 
     public async Task AddAsync(Book book)
     {
+        var newBook = new Book()
+        {
+            Id = book.Id,
+            Title = book.Title,
+            Author = book.Author,
+        };
         _libraryState.Books.Add(book);
+        _libraryState.Books.Add(newBook);
         await _saveLoadService.SaveAsync(_libraryState);
     }
 

@@ -4,6 +4,7 @@ namespace LibraryApp.Repositories.Interfaces;
 
 public interface IBookRepository
 {
+    Task LoadState();
     HashSet<Book> GetAll();
     Book? GetById(string id);
     Task AddAsync(Book book);

@@ -1,6 +1,6 @@
 namespace LibraryApp.Entities;
 
-public record LibraryItem(string Id)
+public record class LibraryItem
 {
     public string InternalId { get; } = Guid.NewGuid().ToString();
     public string Title { get; init; } = string.Empty;
