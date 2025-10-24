@@ -1,6 +1,6 @@
 namespace LibraryApp.Entities;
 
-public enum ItemStatus
+public enum LibraryItemStatus
 {
     Available,  
     Borrowed    

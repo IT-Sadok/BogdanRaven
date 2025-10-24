@@ -1,6 +1,6 @@
 namespace LibraryApp.Entities;
 
-public enum QualityStatus
+public enum ItemQualityStatus
 {
     New,
     Good, 

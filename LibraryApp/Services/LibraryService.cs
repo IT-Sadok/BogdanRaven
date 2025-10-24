@@ -76,10 +76,10 @@ public class LibraryService : ILibraryService
         var book = _bookRepository.GetById(id)
                    ?? throw new KeyNotFoundException($"Book with ID '{id}' not found.");
 
-        if (book.Status == ItemStatus.Borrowed)
+        if (book.Status == LibraryItemStatus.Borrowed)
             throw new InvalidOperationException($"Book '{book.Title}' is already borrowed.");
 
-        var updatedBook = book with { Status = ItemStatus.Borrowed, UpdatedAt = DateTime.UtcNow };
+        var updatedBook = book with { Status = LibraryItemStatus.Borrowed, UpdatedAt = DateTime.UtcNow };
         await _bookRepository.UpdateAsync(updatedBook);
     }
 
@@ -88,28 +88,28 @@ public class LibraryService : ILibraryService
         var book = _bookRepository.GetById(id)
                    ?? throw new KeyNotFoundException($"Book with ID '{id}' not found.");
 
-        if (book.Status == ItemStatus.Available)
+        if (book.Status == LibraryItemStatus.Available)
             throw new InvalidOperationException($"Book '{book.Title}' is not borrowed.");
 
         var updatedBook = book with
         {
-            Status = ItemStatus.Borrowed,
+            Status = LibraryItemStatus.Borrowed,
             BorrowCount = book.BorrowCount + 1,
             UpdatedAt = DateTime.UtcNow,
-            QualityStatus = GetQualityStatus(book.BorrowCount + 1)
+            ItemQualityStatus = GetQualityStatus(book.BorrowCount + 1)
         };
         await _bookRepository.UpdateAsync(updatedBook);
     }
 
-    private QualityStatus GetQualityStatus(int borrowCount)
+    private ItemQualityStatus GetQualityStatus(int borrowCount)
     {
         return borrowCount switch
         {
-            < 1 => QualityStatus.New,
-            < 6 => QualityStatus.Good,
-            < 16 => QualityStatus.Used,
-            < 31 => QualityStatus.Damaged,
-            _ => QualityStatus.Lost
+            < 1 => ItemQualityStatus.New,
+            < 6 => ItemQualityStatus.Good,
+            < 16 => ItemQualityStatus.Used,
+            < 31 => ItemQualityStatus.Damaged,
+            _ => ItemQualityStatus.Lost
         };
     }
 }

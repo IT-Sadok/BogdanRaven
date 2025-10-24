@@ -16,7 +16,7 @@ public static class BookMapper
             Year = model.Year,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            QualityStatus = QualityStatus.New
+            ItemQualityStatus = ItemQualityStatus.New
         };
         return book;
     }
@@ -30,7 +30,7 @@ public static class BookMapper
             Status = entity.Status,
             Title = entity.Title,
             Year = entity.Year,
-            QualityStatus = entity.QualityStatus
+            ItemQualityStatus = entity.ItemQualityStatus
         };
         return book;
     }
