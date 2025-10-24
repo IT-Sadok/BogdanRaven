@@ -105,11 +105,10 @@ public class LibraryService : ILibraryService
     {
         return borrowCount switch
         {
-            < 1 => ItemQualityStatus.New,
-            < 6 => ItemQualityStatus.Good,
-            < 16 => ItemQualityStatus.Used,
-            < 31 => ItemQualityStatus.Damaged,
-            _ => ItemQualityStatus.Lost
+            <= (int)ItemQualityStatus.New => ItemQualityStatus.New,
+            <= (int)ItemQualityStatus.Good => ItemQualityStatus.Good,
+            <= (int)ItemQualityStatus.Used => ItemQualityStatus.Used,
+            _ => ItemQualityStatus.Damaged
         };
     }
 }
