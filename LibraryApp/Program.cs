@@ -12,9 +12,7 @@ var host = Host.CreateDefaultBuilder(args)
         var filePath = "books.json";
         services.AddSingleton<ISaveLoadService<LibraryState>>(sp =>
             new JsonSaveLoadService<LibraryState>(filePath));
-
-        services.AddSingleton<IStateProvider<LibraryState>, StateProvider<LibraryState>>();
-
+        
         services.AddScoped<IBookRepository, BookRepository>();
 
         services.AddScoped<ILibraryService, LibraryService>();

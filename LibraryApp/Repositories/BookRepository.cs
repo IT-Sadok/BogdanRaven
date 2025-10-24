@@ -7,26 +7,30 @@ namespace LibraryApp.Repositories;
 
 public class BookRepository : IBookRepository
 {
-    private readonly IStateProvider<LibraryState> _stateProvider;
     private readonly ISaveLoadService<LibraryState> _saveLoadService;
+    private LibraryState _libraryState;
 
-    public BookRepository(IStateProvider<LibraryState> stateProvider, ISaveLoadService<LibraryState> saveLoadService)
+    public BookRepository(ISaveLoadService<LibraryState> saveLoadService)
     {
-        _stateProvider = stateProvider;
         _saveLoadService = saveLoadService;
+
+        if (saveLoadService.IsSaveExistsAsync().Result)
+            _libraryState = saveLoadService.LoadAsync().Result!;
+        else
+            _libraryState = new LibraryState();
     }
 
     public HashSet<Book> GetAll() =>
-        _stateProvider.LibraryState.Books;
+        _libraryState.Books;
 
     public Book? GetById(string id) =>
-        _stateProvider.LibraryState.Books
+        _libraryState.Books
             .FirstOrDefault(b => b.Id == id);
 
     public async Task AddAsync(Book book)
     {
-        _stateProvider.LibraryState.Books.Add(book);
-        await _saveLoadService.SaveAsync(_stateProvider.LibraryState);
+        _libraryState.Books.Add(book);
+        await _saveLoadService.SaveAsync(_libraryState);
     }
 
     public async Task RemoveAsync(string id)
@@ -34,21 +38,21 @@ public class BookRepository : IBookRepository
         var book = GetById(id);
         if (book != null)
         {
-            _stateProvider.LibraryState.Books.Remove(book);
-            await _saveLoadService.SaveAsync(_stateProvider.LibraryState);
+            _libraryState.Books.Remove(book);
+            await _saveLoadService.SaveAsync(_libraryState);
         }
     }
 
     public async Task UpdateAsync(Book book)
     {
-        var existing = _stateProvider.LibraryState.Books
+        var existing = _libraryState.Books
             .FirstOrDefault(b => b.Id == book.Id);
 
         if (existing != null)
         {
-            _stateProvider.LibraryState.Books.Remove(existing);
-            _stateProvider.LibraryState.Books.Add(book);
-            await _saveLoadService.SaveAsync(_stateProvider.LibraryState);
+            _libraryState.Books.Remove(existing);
+            _libraryState.Books.Add(book);
+            await _saveLoadService.SaveAsync(_libraryState);
         }
     }
 }
