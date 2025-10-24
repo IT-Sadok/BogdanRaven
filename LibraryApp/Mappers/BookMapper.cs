@@ -7,9 +7,8 @@ public static class BookMapper
 {
     public static Book ToEntity(this BookModel model)
     {
-        var book = new Book()
+        var book = new Book(model.Id)
         {
-            Id = model.Id,
             Author = model.Author,
             Status = model.Status,
             Title = model.Title,
