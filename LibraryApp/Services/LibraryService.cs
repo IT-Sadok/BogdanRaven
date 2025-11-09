@@ -16,7 +16,7 @@ public class LibraryService : ILibraryService
     }
 
     public IEnumerable<BookModel> GetAllBooks() =>
-        _bookRepository.GetAll().Select(b => b.ToModel());
+        _bookRepository.GetAll().Select(keyValuePair => keyValuePair.Value.ToModel());
 
     public BookModel? GetById(string id)
     {
@@ -36,7 +36,7 @@ public class LibraryService : ILibraryService
             throw new ArgumentException("Author name cannot be empty.");
 
         return _bookRepository.GetAll()
-            .Where(b => b.Author.Contains(author, StringComparison.OrdinalIgnoreCase)).Select(book => book.ToModel());
+            .Where(keyValuePair => keyValuePair.Value.Author.Contains(author, StringComparison.OrdinalIgnoreCase)).Select(keyValuePair => keyValuePair.Value.ToModel());
     }
 
     public IEnumerable<BookModel> GetByTitle(string title)
@@ -45,7 +45,7 @@ public class LibraryService : ILibraryService
             throw new ArgumentException("Title cannot be empty.");
 
         return _bookRepository.GetAll()
-            .Where(b => b.Title.Contains(title, StringComparison.OrdinalIgnoreCase)).Select(book => book.ToModel());
+            .Where(keyValuePair => keyValuePair.Value.Title.Contains(title, StringComparison.OrdinalIgnoreCase)).Select(keyValuePair => keyValuePair.Value.ToModel());
     }
 
     public async Task AddBookAsync(BookModel book)
@@ -93,7 +93,7 @@ public class LibraryService : ILibraryService
 
         var updatedBook = book with
         {
-            Status = LibraryItemStatus.Borrowed,
+            Status = LibraryItemStatus.Available,
             BorrowCount = book.BorrowCount + 1,
             UpdatedAt = DateTime.UtcNow,
             ItemQualityStatus = GetQualityStatus(book.BorrowCount + 1)

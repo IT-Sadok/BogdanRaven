@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using LibraryApp.Entities;
 using LibraryApp.Repositories.Interfaces;
 using LibraryApp.Services;
@@ -9,6 +10,8 @@ public class BookRepository : IBookRepository
 {
     private readonly ISaveLoadService<LibraryState> _saveLoadService;
     private LibraryState _libraryState;
+
+    private SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
     public BookRepository(ISaveLoadService<LibraryState> saveLoadService)
     {
@@ -24,46 +27,60 @@ public class BookRepository : IBookRepository
             _libraryState = new LibraryState();
     }
 
-    public HashSet<Book> GetAll() =>
+    public ConcurrentDictionary<string, Book> GetAll() =>
         _libraryState.Books;
 
     public Book? GetById(string id) =>
-        _libraryState.Books
-            .FirstOrDefault(b => b.Id == id);
+        _libraryState.Books.GetValueOrDefault(id);
 
     public async Task AddAsync(Book book)
     {
-        var newBook = new Book()
+        await _semaphore.WaitAsync();
+        try
         {
-            Id = book.Id,
-            Title = book.Title,
-            Author = book.Author,
-        };
-        _libraryState.Books.Add(book);
-        _libraryState.Books.Add(newBook);
-        await _saveLoadService.SaveAsync(_libraryState);
+            _libraryState.Books.TryAdd(book.Id, book);
+            await _saveLoadService.SaveAsync(_libraryState);
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
     }
 
     public async Task RemoveAsync(string id)
     {
-        var book = GetById(id);
-        if (book != null)
+        await _semaphore.WaitAsync();
+        try
         {
-            _libraryState.Books.Remove(book);
-            await _saveLoadService.SaveAsync(_libraryState);
+            var book = GetById(id);
+            if (book != null)
+            {
+                _libraryState.Books.TryRemove(id, out _);
+                await _saveLoadService.SaveAsync(_libraryState);
+            }
+        }
+        finally
+        {
+            _semaphore.Release();
         }
     }
 
-    public async Task UpdateAsync(Book book)
+    public async Task UpdateAsync(Book updatedBook)
     {
-        var existing = _libraryState.Books
-            .FirstOrDefault(b => b.Id == book.Id);
-
-        if (existing != null)
+        await _semaphore.WaitAsync();
+        try
         {
-            _libraryState.Books.Remove(existing);
-            _libraryState.Books.Add(book);
+            _libraryState.Books.AddOrUpdate(
+                updatedBook.Id,
+                _ => updatedBook,
+                (_, _) => updatedBook
+            );
+
             await _saveLoadService.SaveAsync(_libraryState);
+        }
+        finally
+        {
+            _semaphore.Release();
         }
     }
 }
