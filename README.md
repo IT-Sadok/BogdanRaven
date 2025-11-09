@@ -1,6 +1,5 @@
 # BogdanRaven
 
-.net journey
+app library
 
-test
 
