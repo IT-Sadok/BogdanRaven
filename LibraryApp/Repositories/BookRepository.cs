@@ -27,8 +27,8 @@ public class BookRepository : IBookRepository
             _libraryState = new LibraryState();
     }
 
-    public ConcurrentDictionary<string, Book> GetAll() =>
-        _libraryState.Books;
+    public List<KeyValuePair<string, Book>> GetAll() =>
+        _libraryState.Books.ToList();
 
     public Book? GetById(string id) => 
         _libraryState.Books.GetValueOrDefault(id);
