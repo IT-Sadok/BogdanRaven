@@ -3,6 +3,7 @@ using LibraryApp.Repositories;
 using LibraryApp.Repositories.Interfaces;
 using LibraryApp.Services;
 using LibraryApp.Services.Interfaces;
+using LibraryApp.Simulation;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +19,7 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddScoped<ILibraryService, LibraryService>();
 
         services.AddScoped<ConsoleMenu>();
+        services.AddScoped<LibrarySimulation>();
     })
     .Build();
 

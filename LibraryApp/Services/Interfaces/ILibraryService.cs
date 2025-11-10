@@ -5,7 +5,7 @@ namespace LibraryApp.Services.Interfaces;
 
 public interface ILibraryService
 {
-    IEnumerable<BookModel> GetAllBooks();
+    IReadOnlyList<BookModel> GetAllBooks();
     BookModel? GetById(string id);
     IEnumerable<BookModel> GetByAuthor(string author);
     IEnumerable<BookModel> GetByTitle(string title);

@@ -1,16 +1,19 @@
 using LibraryApp.Entities;
 using LibraryApp.Models;
 using LibraryApp.Services.Interfaces;
+using LibraryApp.Simulation;
 
 namespace LibraryApp.Menu;
 
 public class ConsoleMenu
 {
     private readonly ILibraryService _libraryService;
+    private readonly LibrarySimulation _librarySimulation;
 
-    public ConsoleMenu(ILibraryService libraryService)
+    public ConsoleMenu(ILibraryService libraryService, LibrarySimulation librarySimulation)
     {
         _libraryService = libraryService;
+        _librarySimulation = librarySimulation;
     }
 
     private async Task ExecuteSafe(Func<Task> action)
@@ -40,6 +43,7 @@ public class ConsoleMenu
             Console.WriteLine("5. Return book");
             Console.WriteLine("6. Search by author");
             Console.WriteLine("7. Search by title");
+            Console.WriteLine("8. Simulate users");
             Console.WriteLine("0. Exit");
             Console.Write("\nChoose an option: ");
 
@@ -48,7 +52,7 @@ public class ConsoleMenu
             switch (input)
             {
                 case "1":
-                    ShowAllBooks();
+                    await ShowAllBooks();
                     break;
                 case "2":
                     await AddBookAsync();
@@ -68,6 +72,9 @@ public class ConsoleMenu
                 case "7":
                     SearchByTitle();
                     break;
+                case "8":
+                    await RunSimulatorAsync();
+                    break;
                 case "0":
                     return;
                 default:
@@ -80,13 +87,27 @@ public class ConsoleMenu
         }
     }
 
-    private void ShowAllBooks()
+    private async Task RunSimulatorAsync()
     {
-        ExecuteSafe(async () =>
+        Console.Write("Enter number of parallel users: ");
+        int.TryParse(Console.ReadLine(), out int count);
+        if (count <= 0) count = 50;
+        var cts = new CancellationTokenSource();
+        Console.WriteLine("Press Enter to stop simulation....\n");
+        var task = _librarySimulation.RunAsync(count, cts.Token);
+        Console.ReadLine();
+        await cts.CancelAsync();
+        await task;
+    }
+
+    private async Task ShowAllBooks()
+    {
+        await ExecuteSafe(() =>
         {
             Console.WriteLine("\n=== Books in Library ===");
             foreach (var book in _libraryService.GetAllBooks())
                 Console.WriteLine(book);
+            return Task.CompletedTask;
         });
     }
 
