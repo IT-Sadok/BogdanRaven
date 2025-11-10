@@ -6,7 +6,7 @@ namespace LibraryApp.Repositories.Interfaces;
 public interface IBookRepository
 {
     Task LoadState();
-    List<KeyValuePair<string, Book>> GetAll();
+    IReadOnlyList<Book> GetAll();
     Book? GetById(string id);
     Task AddAsync(Book book);
     Task RemoveAsync(string id);

@@ -11,7 +11,6 @@ public class BookRepository : IBookRepository
     private readonly ISaveLoadService<LibraryState> _saveLoadService;
     private LibraryState _libraryState;
 
-    private SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
     public BookRepository(ISaveLoadService<LibraryState> saveLoadService)
     {
@@ -27,59 +26,37 @@ public class BookRepository : IBookRepository
             _libraryState = new LibraryState();
     }
 
-    public List<KeyValuePair<string, Book>> GetAll() =>
-        _libraryState.Books.ToList();
+    public IReadOnlyList<Book> GetAll() => 
+        _libraryState.Books.Values.ToArray();
 
-    public Book? GetById(string id) => 
+    public Book? GetById(string id) =>
         _libraryState.Books.GetValueOrDefault(id);
 
     public async Task AddAsync(Book book)
     {
-        await _semaphore.WaitAsync();
-        try
-        {
-            _libraryState.Books.TryAdd(book.Id, book);
-            await _saveLoadService.SaveAsync(_libraryState);
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
+        _libraryState.Books.TryAdd(book.Id, book);
+        await _saveLoadService.SaveAsync(_libraryState);
     }
 
     public async Task RemoveAsync(string id)
     {
-        await _semaphore.WaitAsync();
-        try
+      
+        var book = GetById(id);
+        if (book != null)
         {
-            var book = GetById(id);
-            if (book != null)
-            {
-                _libraryState.Books.TryRemove(id,out _);
-                await _saveLoadService.SaveAsync(_libraryState);
-            }
-        }
-        finally
-        {
-            _semaphore.Release();
+            _libraryState.Books.TryRemove(id, out _);
+            await _saveLoadService.SaveAsync(_libraryState);
         }
     }
 
     public async Task UpdateAsync(Book updatedBook)
     {
-        await _semaphore.WaitAsync();
-        try
-        {
-            if (_libraryState.Books.ContainsKey(updatedBook.Id) == false)
-                return;
+        if (_libraryState.Books.ContainsKey(updatedBook.Id) == false)
+            return;
 
-            _libraryState.Books[updatedBook.Id] = updatedBook;
+        _libraryState.Books[updatedBook.Id] = updatedBook;
 
-            await _saveLoadService.SaveAsync(_libraryState);
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
+        await _saveLoadService.SaveAsync(_libraryState);
+       
     }
 }
