@@ -6,7 +6,6 @@ namespace LibraryApp.Services;
 public class JsonSaveLoadService<T> : ISaveLoadService<T>
 {
     private readonly string _filePath;
-    private SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
     public JsonSaveLoadService(string filePath)
     {
@@ -27,16 +26,8 @@ public class JsonSaveLoadService<T> : ISaveLoadService<T>
 
     public async Task SaveAsync(T data)
     {
-        await _semaphore.WaitAsync();
-        try
-        {
-            await using FileStream stream = File.Create(_filePath);
-            await JsonSerializer.SerializeAsync(stream, data,
-                new JsonSerializerOptions { WriteIndented = true });
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
+        await using FileStream stream = File.Create(_filePath);
+        await JsonSerializer.SerializeAsync(stream, data,
+            new JsonSerializerOptions { WriteIndented = true });
     }
 }

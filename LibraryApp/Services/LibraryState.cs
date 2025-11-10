@@ -5,5 +5,5 @@ namespace LibraryApp.Services;
 
 public class LibraryState
 {
-    public ConcurrentDictionary<string, Book> Books { get; set; } = new();
+    public Dictionary<string, Book> Books { get; set; } = new();
 }
