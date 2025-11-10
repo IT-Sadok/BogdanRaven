@@ -27,10 +27,10 @@ public class BookRepository : IBookRepository
             _libraryState = new LibraryState();
     }
 
-    public Dictionary<string, Book> GetAll() =>
+    public ConcurrentDictionary<string, Book> GetAll() =>
         _libraryState.Books;
 
-    public Book? GetById(string id) =>
+    public Book? GetById(string id) => 
         _libraryState.Books.GetValueOrDefault(id);
 
     public async Task AddAsync(Book book)
@@ -55,7 +55,7 @@ public class BookRepository : IBookRepository
             var book = GetById(id);
             if (book != null)
             {
-                _libraryState.Books.Remove(id);
+                _libraryState.Books.TryRemove(id,out _);
                 await _saveLoadService.SaveAsync(_libraryState);
             }
         }

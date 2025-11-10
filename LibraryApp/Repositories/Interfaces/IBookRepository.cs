@@ -6,7 +6,7 @@ namespace LibraryApp.Repositories.Interfaces;
 public interface IBookRepository
 {
     Task LoadState();
-    Dictionary<string,Book> GetAll();
+    ConcurrentDictionary<string,Book> GetAll();
     Book? GetById(string id);
     Task AddAsync(Book book);
     Task RemoveAsync(string id);
